@@ -2,27 +2,28 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { name, email, whatsapp, subject, message, source } = await req.json();
+    const { name, email, whatsapp, message, source } = await req.json();
 
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
 
+    // ලකුණ (Status Icon) තෝරා ගැනීම
+    let statusIcon = "📝";
+    if (source.includes("WhatsApp")) statusIcon = "🟢";
+    if (source.includes("Gmail")) statusIcon = "🔴";
+
     const telegramMessage = `
-🚀 *New Portfolio Inquiry!*
+${statusIcon} *New Activity: ${source}*
 ──────────────────
-👤 *From:* ${name}
-📧 *Email:* ${email}
-📱 *WhatsApp:* ${whatsapp || 'Not provided'}
-📝 *Subject:* ${subject}
-🛠️ *Action:* ${source}
+👤 *Name:* ${name || 'N/A'}
+📧 *Email:* ${email || 'N/A'}
+📱 *WhatsApp:* ${whatsapp || 'N/A'}
 ──────────────────
 💬 *Message:*
-${message}
+${message || '(No message yet)'}
     `;
 
-    const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
-    const res = await fetch(telegramUrl, {
+    const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -32,11 +33,7 @@ ${message}
       }),
     });
 
-    if (res.ok) {
-      return NextResponse.json({ success: true }, { status: 200 });
-    } else {
-      return NextResponse.json({ success: false }, { status: 500 });
-    }
+    return NextResponse.json({ success: res.ok });
   } catch (error) {
     return NextResponse.json({ success: false }, { status: 500 });
   }
