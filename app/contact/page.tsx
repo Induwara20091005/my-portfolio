@@ -1,197 +1,108 @@
-'use client';
+"use client";
+import { useState } from "react";
 
-import { useState } from 'react';
-import { Mail, MessageCircle, MapPin, Send, CheckCircle2, Loader2 } from 'lucide-react';
-
-const contactMethods = [
-  {
-    icon: MessageCircle,
-    title: 'WhatsApp',
-    value: '+94 76 156 2585',
-    link: 'https://wa.me/94761562585',
-    color: 'from-green-500 to-emerald-500',
-  },
-  {
-    icon: Mail,
-    title: 'Email',
-    value: 'gginduwaradeshan@gmail.com',
-    link: 'mailto:gginduwaradeshan@gmail.com',
-    color: 'from-blue-500 to-cyan-500',
-  },
-  {
-    icon: MessageCircle,
-    title: 'Telegram',
-    value: '@gginduwaradeshan',
-    link: 'https://t.me/gginduwaradeshan',
-    color: 'from-sky-500 to-blue-500',
-  },
-  {
-    icon: MapPin,
-    title: 'Location',
-    value: 'Kataragama, Sri Lanka',
-    link: null,
-    color: 'from-red-500 to-pink-500',
-  },
-];
-
-export default function Contact() {
+export default function ContactForm() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
+    name: "",
+    email: "",
+    whatsapp: "",
+    message: "",
   });
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('sending');
-
-    const botToken = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
-
-    const telegramMessage = `
-🚀 *New Portfolio Inquiry!*
-──────────────────
-👤 *From:* ${formData.name}
-📧 *Email:* ${formData.email}
-📝 *Subject:* ${formData.subject}
-💬 *Message:* ${formData.message}
-──────────────────
-    `;
-
-    try {
-      const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: telegramMessage,
-          parse_mode: 'Markdown',
-        }),
-      });
-
-      if (response.ok) {
-        setStatus('success');
-        setFormData({ name: '', email: '', subject: '', message: '' });
-        setTimeout(() => setStatus('idle'), 5000);
-      } else {
-        setStatus('error');
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      setStatus('error');
-    }
-  };
+  const [status, setStatus] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Telegram එකට දත්ත යවන ප්‍රධාන Function එක
+  const sendToTelegram = async () => {
+    try {
+      setStatus("Sending...");
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        setStatus("Success! Details sent to Telegram.");
+      } else {
+        setStatus("Error sending to Telegram.");
+      }
+    } catch (error) {
+      console.error(error);
+      setStatus("Connection error.");
+    }
+  };
+
+  // WhatsApp හරහා විවෘත කිරීම
+  const handleWhatsApp = () => {
+    sendToTelegram(); // Telegram එකටත් යවනවා
+    const text = `*New Inquiry*%0A*Name:* ${formData.name}%0A*Email:* ${formData.email}%0A*WhatsApp:* ${formData.whatsapp}%0A*Message:* ${formData.message}`;
+    window.open(`https://wa.me/94761562585?text=${text}`, "_blank");
+  };
+
+  // Gmail හරහා විවෘත කිරීම
+  const handleGmail = () => {
+    sendToTelegram(); // Telegram එකටත් යවනවා
+    const subject = encodeURIComponent("Project Inquiry - Portfolio");
+    const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\nWhatsApp: ${formData.whatsapp}\n\nMessage:\n${formData.message}`);
+    window.location.href = `mailto:gginduwaradeshan@gmail.com?subject=${subject}&body=${body}`;
+  };
+
   return (
-    <div className="min-h-screen py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 animate-fade-in">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-display font-bold mb-6">
-            Get In <span className="gradient-text">Touch</span>
-          </h1>
-          <p className="text-xl text-slate-400 font-body max-w-3xl mx-auto">
-            Let's discuss your project and bring your ideas to life
-          </p>
-          <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-cyan-500 mx-auto rounded-full mt-6" />
+    <section id="contact" className="py-12 px-4 max-w-2xl mx-auto">
+      <div className="bg-gray-900 p-8 rounded-2xl border border-gray-800 shadow-2xl">
+        <h2 className="text-3xl font-bold text-white mb-6 text-center">Get In Touch 🚀</h2>
+        
+        <div className="space-y-4">
+          <input 
+            name="name" placeholder="Full Name" onChange={handleChange}
+            className="w-full p-4 bg-gray-800 rounded-xl border border-gray-700 text-white focus:border-blue-500 outline-none transition"
+          />
+          <input 
+            name="email" type="email" placeholder="Email Address" onChange={handleChange}
+            className="w-full p-4 bg-gray-800 rounded-xl border border-gray-700 text-white focus:border-blue-500 outline-none transition"
+          />
+          <input 
+            name="whatsapp" placeholder="Your WhatsApp (Optional)" onChange={handleChange}
+            className="w-full p-4 bg-gray-800 rounded-xl border border-gray-700 text-white focus:border-blue-500 outline-none transition"
+          />
+          <textarea 
+            name="message" placeholder="Describe your project..." onChange={handleChange}
+            className="w-full p-4 bg-gray-800 rounded-xl border border-gray-700 text-white h-32 focus:border-blue-500 outline-none transition"
+          />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          <div className="animate-slide-up">
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-primary-500/20 rounded-2xl p-8">
-              <h2 className="text-3xl font-display font-bold text-white mb-6">Send a Message</h2>
+        <p className="text-sm text-gray-400 mt-6 mb-3 text-center">Choose your preferred way to send:</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* WhatsApp Button */}
+          <button 
+            onClick={handleWhatsApp}
+            className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl transition transform hover:scale-105"
+          >
+            <span>🟢</span> WhatsApp
+          </button>
 
-              {status === 'success' && (
-                <div className="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-xl flex items-center space-x-3 animate-fade-in">
-                  <CheckCircle2 className="w-6 h-6 text-green-400" />
-                  <span className="text-green-300 font-body text-lg">Message sent to Telegram successfully!</span>
-                </div>
-              )}
-
-              {status === 'error' && (
-                <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl flex items-center space-x-3 animate-fade-in">
-                  <span className="text-red-300 font-body text-lg">Error sending message. Please try again.</span>
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-slate-300 font-body text-lg mb-2">Your Name *</label>
-                  <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full px-4 py-3 bg-slate-800/50 border border-primary-500/30 rounded-xl text-white focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 transition-all" placeholder="John Doe" />
-                </div>
-                <div>
-                  <label className="block text-slate-300 font-body text-lg mb-2">Your Email *</label>
-                  <input type="email" name="email" required value={formData.email} onChange={handleChange} className="w-full px-4 py-3 bg-slate-800/50 border border-primary-500/30 rounded-xl text-white focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 transition-all" placeholder="john@example.com" />
-                </div>
-                <div>
-                  <label className="block text-slate-300 font-body text-lg mb-2">Subject *</label>
-                  <input type="text" name="subject" required value={formData.subject} onChange={handleChange} className="w-full px-4 py-3 bg-slate-800/50 border border-primary-500/30 rounded-xl text-white focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 transition-all" placeholder="Project Inquiry" />
-                </div>
-                <div>
-                  <label className="block text-slate-300 font-body text-lg mb-2">Your Message *</label>
-                  <textarea name="message" required value={formData.message} onChange={handleChange} rows={6} className="w-full px-4 py-3 bg-slate-800/50 border border-primary-500/30 rounded-xl text-white focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20 transition-all resize-none" placeholder="Tell me about your project..." />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={status === 'sending'}
-                  className="w-full px-8 py-4 bg-primary-500 text-white font-body text-lg font-semibold rounded-xl transition-all duration-300 hover:bg-primary-600 disabled:opacity-50 flex items-center justify-center space-x-2"
-                >
-                  {status === 'sending' ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      <span>Send Message</span>
-                      <Send className="w-5 h-5" />
-                    </>
-                  )}
-                </button>
-              </form>
-            </div>
-          </div>
-
-          <div className="space-y-6 animate-slide-up">
-            <div className="bg-slate-900/50 backdrop-blur-sm border border-primary-500/20 rounded-2xl p-8">
-              <h2 className="text-3xl font-display font-bold text-white mb-6">Contact Methods</h2>
-              <div className="space-y-4">
-                {contactMethods.map((method) => (
-                  <div key={method.title} className="group">
-                    {method.link ? (
-                      <a href={method.link} target="_blank" rel="noopener noreferrer" className="flex items-start space-x-4 p-4 bg-slate-800/30 border border-primary-500/20 rounded-xl hover:border-primary-400/40 transition-all">
-                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${method.color} flex items-center justify-center flex-shrink-0`}><method.icon className="w-6 h-6 text-white" /></div>
-                        <div className="flex-grow">
-                          <h3 className="text-lg font-display font-semibold text-white mb-1">{method.title}</h3>
-                          <p className="text-slate-400 font-body text-lg group-hover:text-primary-400">{method.value}</p>
-                        </div>
-                      </a>
-                    ) : (
-                      <div className="flex items-start space-x-4 p-4 bg-slate-800/30 border border-primary-500/20 rounded-xl">
-                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${method.color} flex items-center justify-center flex-shrink-0`}><method.icon className="w-6 h-6 text-white" /></div>
-                        <div className="flex-grow">
-                          <h3 className="text-lg font-display font-semibold text-white mb-1">{method.title}</h3>
-                          <p className="text-slate-400 font-body text-lg">{method.value}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-primary-500/10 to-cyan-500/10 border border-primary-500/30 rounded-2xl p-8">
-              <h3 className="text-2xl font-display font-bold text-white mb-4">Available for Projects</h3>
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-green-400 font-body text-lg font-semibold">Open for Work</span>
-              </div>
-            </div>
-          </div>
+          {/* Gmail Button */}
+          <button 
+            onClick={handleGmail}
+            className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl transition transform hover:scale-105"
+          >
+            <span>🔴</span> Gmail / Email
+          </button>
         </div>
+
+        {/* Telegram Only Button */}
+        <button 
+          onClick={sendToTelegram}
+          className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition flex items-center justify-center gap-2"
+        >
+          <span>🔵</span> Send to Telegram Only
+        </button>
+
+        {status && <p className="text-center mt-4 text-blue-400 font-medium">{status}</p>}
       </div>
-    </div>
+    </section>
   );
 }
