@@ -1,108 +1,147 @@
-"use client";
-import { useState } from "react";
+'use client';
 
-export default function ContactForm() {
+import { useState } from 'react';
+import { Mail, MessageCircle, MapPin, Send, CheckCircle2, Loader2, Smartphone } from 'lucide-react';
+
+export default function Contact() {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    whatsapp: "",
-    message: "",
+    name: '',
+    email: '',
+    whatsapp: '',
+    subject: 'Project Inquiry',
+    message: '',
   });
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Telegram එකට දත්ත යවන ප්‍රධාන Function එක
+  // Telegram API එකට Backend හරහා දත්ත යැවීම
   const sendToTelegram = async () => {
     try {
-      setStatus("Sending...");
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-      if (response.ok) {
-        setStatus("Success! Details sent to Telegram.");
-      } else {
-        setStatus("Error sending to Telegram.");
-      }
+      return response.ok;
     } catch (error) {
-      console.error(error);
-      setStatus("Connection error.");
+      console.error('Telegram Error:', error);
+      return false;
     }
   };
 
-  // WhatsApp හරහා විවෘත කිරීම
-  const handleWhatsApp = () => {
-    sendToTelegram(); // Telegram එකටත් යවනවා
+  const handleWhatsApp = async () => {
+    setStatus('sending');
+    await sendToTelegram();
     const text = `*New Inquiry*%0A*Name:* ${formData.name}%0A*Email:* ${formData.email}%0A*WhatsApp:* ${formData.whatsapp}%0A*Message:* ${formData.message}`;
-    window.open(`https://wa.me/94761562585?text=${text}`, "_blank");
+    window.open(`https://wa.me/94761562585?text=${text}`, '_blank');
+    setStatus('success');
+    setTimeout(() => setStatus('idle'), 5000);
   };
 
-  // Gmail හරහා විවෘත කිරීම
-  const handleGmail = () => {
-    sendToTelegram(); // Telegram එකටත් යවනවා
-    const subject = encodeURIComponent("Project Inquiry - Portfolio");
+  const handleGmail = async () => {
+    setStatus('sending');
+    await sendToTelegram();
+    const subject = encodeURIComponent(formData.subject);
     const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\nWhatsApp: ${formData.whatsapp}\n\nMessage:\n${formData.message}`);
     window.location.href = `mailto:gginduwaradeshan@gmail.com?subject=${subject}&body=${body}`;
+    setStatus('success');
+    setTimeout(() => setStatus('idle'), 5000);
+  };
+
+  const handleSubmitOnlyTelegram = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('sending');
+    const success = await sendToTelegram();
+    if (success) {
+      setStatus('success');
+      setFormData({ name: '', email: '', whatsapp: '', subject: 'Project Inquiry', message: '' });
+      setTimeout(() => setStatus('idle'), 5000);
+    } else {
+      setStatus('error');
+    }
   };
 
   return (
-    <section id="contact" className="py-12 px-4 max-w-2xl mx-auto">
-      <div className="bg-gray-900 p-8 rounded-2xl border border-gray-800 shadow-2xl">
-        <h2 className="text-3xl font-bold text-white mb-6 text-center">Get In Touch 🚀</h2>
-        
-        <div className="space-y-4">
-          <input 
-            name="name" placeholder="Full Name" onChange={handleChange}
-            className="w-full p-4 bg-gray-800 rounded-xl border border-gray-700 text-white focus:border-blue-500 outline-none transition"
-          />
-          <input 
-            name="email" type="email" placeholder="Email Address" onChange={handleChange}
-            className="w-full p-4 bg-gray-800 rounded-xl border border-gray-700 text-white focus:border-blue-500 outline-none transition"
-          />
-          <input 
-            name="whatsapp" placeholder="Your WhatsApp (Optional)" onChange={handleChange}
-            className="w-full p-4 bg-gray-800 rounded-xl border border-gray-700 text-white focus:border-blue-500 outline-none transition"
-          />
-          <textarea 
-            name="message" placeholder="Describe your project..." onChange={handleChange}
-            className="w-full p-4 bg-gray-800 rounded-xl border border-gray-700 text-white h-32 focus:border-blue-500 outline-none transition"
-          />
+    <div className="min-h-screen py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12 animate-fade-in">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-display font-bold mb-6">
+            Get In <span className="gradient-text">Touch</span>
+          </h1>
+          <p className="text-xl text-slate-400 font-body max-w-3xl mx-auto">
+            Let's discuss your project and bring your ideas to life
+          </p>
         </div>
 
-        <p className="text-sm text-gray-400 mt-6 mb-3 text-center">Choose your preferred way to send:</p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* WhatsApp Button */}
-          <button 
-            onClick={handleWhatsApp}
-            className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl transition transform hover:scale-105"
-          >
-            <span>🟢</span> WhatsApp
-          </button>
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-slate-900/50 backdrop-blur-sm border border-primary-500/20 rounded-2xl p-6 md:p-10">
+            <h2 className="text-3xl font-display font-bold text-white mb-8">Send a Message</h2>
 
-          {/* Gmail Button */}
-          <button 
-            onClick={handleGmail}
-            className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl transition transform hover:scale-105"
-          >
-            <span>🔴</span> Gmail / Email
-          </button>
+            {status === 'success' && (
+              <div className="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-xl flex items-center space-x-3 animate-fade-in">
+                <CheckCircle2 className="w-6 h-6 text-green-400" />
+                <span className="text-green-300 font-body text-lg text-sm sm:text-base">Message processed successfully! Check your app.</span>
+              </div>
+            )}
+
+            {status === 'error' && (
+              <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl flex items-center space-x-3 animate-fade-in">
+                <span className="text-red-300 font-body text-lg">Error sending message. Please try again.</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmitOnlyTelegram} className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-slate-300 font-body mb-2">Your Name *</label>
+                  <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full px-4 py-3 bg-slate-800/50 border border-primary-500/30 rounded-xl text-white focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-400/20 transition-all" placeholder="John Doe" />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-body mb-2">WhatsApp Number</label>
+                  <input type="text" name="whatsapp" value={formData.whatsapp} onChange={handleChange} className="w-full px-4 py-3 bg-slate-800/50 border border-primary-500/30 rounded-xl text-white focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-400/20 transition-all" placeholder="+94 7x xxx xxxx" />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-slate-300 font-body mb-2">Your Email *</label>
+                <input type="email" name="email" required value={formData.email} onChange={handleChange} className="w-full px-4 py-3 bg-slate-800/50 border border-primary-500/30 rounded-xl text-white focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-400/20 transition-all" placeholder="john@example.com" />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-body mb-2">Your Message *</label>
+                <textarea name="message" required value={formData.message} onChange={handleChange} rows={5} className="w-full px-4 py-3 bg-slate-800/50 border border-primary-500/30 rounded-xl text-white focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-400/20 transition-all resize-none" placeholder="Tell me about your project..." />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-4 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <button type="button" onClick={handleWhatsApp} disabled={status === 'sending'} className="flex items-center justify-center space-x-2 px-6 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all active:scale-95">
+                    <MessageCircle className="w-5 h-5" />
+                    <span className="whitespace-nowrap">Send via WhatsApp</span>
+                  </button>
+
+                  <button type="button" onClick={handleGmail} disabled={status === 'sending'} className="flex items-center justify-center space-x-2 px-6 py-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-all active:scale-95">
+                    <Mail className="w-5 h-5" />
+                    <span className="whitespace-nowrap">Send via Gmail</span>
+                  </button>
+                </div>
+
+                <button type="submit" disabled={status === 'sending'} className="w-full px-6 py-4 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl transition-all flex items-center justify-center space-x-2">
+                  {status === 'sending' ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                    <>
+                      <span>Submit to Telegram Only</span>
+                      <Send className="w-5 h-5" />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-
-        {/* Telegram Only Button */}
-        <button 
-          onClick={sendToTelegram}
-          className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition flex items-center justify-center gap-2"
-        >
-          <span>🔵</span> Send to Telegram Only
-        </button>
-
-        {status && <p className="text-center mt-4 text-blue-400 font-medium">{status}</p>}
       </div>
-    </section>
+    </div>
   );
 }
