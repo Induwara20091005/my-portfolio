@@ -36,56 +36,6 @@ portfolio-nextjs/
 ├── tsconfig.json
 └── next.config.mjs
 ```
-
-## 🛠️ Installation & Setup
-
-### Prerequisites
-
-- Node.js 18+ installed
-- npm or yarn package manager
-
-### Steps
-
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
-
-2. **Run Development Server**
-   ```bash
-   npm run dev
-   ```
-
-3. **Open Browser**
-   Navigate to `http://localhost:3000`
-
-4. **Build for Production**
-   ```bash
-   npm run build
-   npm start
-   ```
-
-## 🎨 Customization
-
-### Colors
-The color scheme uses Tailwind's teal/cyan palette. To customize:
-- Edit `tailwind.config.ts` for theme colors
-- Modify `globals.css` for custom CSS variables
-
-### Content
-Update personal information in:
-- `app/page.tsx` - Home page hero section
-- `app/about/page.tsx` - Bio and tech stack
-- `app/projects/page.tsx` - Project details
-- `app/contact/page.tsx` - Contact information
-
-### Fonts
-Currently uses:
-- **Display Font**: Orbitron (for headings)
-- **Body Font**: Rajdhani (for content)
-
-Change fonts in `app/globals.css` by updating the Google Fonts import.
-
 ## 📄 Pages Overview
 
 ### Home (`/`)
@@ -114,18 +64,6 @@ Change fonts in `app/globals.css` by updating the Google Fonts import.
 - Contact form
 - Multiple contact methods
 - Availability status
-
-## 🌐 Deployment
-
-### Vercel (Recommended)
-1. Push code to GitHub
-2. Import project in Vercel
-3. Deploy automatically
-
-### Other Platforms
-- **Netlify**: Connect Git repository
-- **AWS/Google Cloud**: Use Docker or static export
-- **Self-hosted**: Run `npm run build` and serve `.next` folder
 
 ## 📱 Contact Information
 
