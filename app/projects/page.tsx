@@ -79,22 +79,25 @@ export default function Projects() {
             >
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                 {/* Image/Visual Section */}
-                <div className={`relative bg-gradient-to-br ${project.color} p-12 flex items-center justify-center`}>
-                  <div className="relative z-10 flex items-center justify-center">
-                    {project.imageUrl ? (
-                      <img 
-                        src={project.imageUrl} 
-                        alt={project.title} 
-                        className="w-32 h-32 rounded-full object-cover shadow-2xl border-4 border-white/20 opacity-90"
-                      />
-                    ) : (
-                      project.icon && <project.icon className="w-32 h-32 text-white opacity-90" strokeWidth={1.5} />
-                    )}
-                  </div>
-                  {/* Decorative Elements */}
-                  <div className="absolute inset-0 bg-black/20" />
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-                  <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+                {/* මෙතනදී DJ project එකට Gradient එක වෙනුවට Full Image එකක් එන්න සකස් කළා */}
+                <div className={`relative ${project.imageUrl ? 'p-0' : `bg-gradient-to-br ${project.color} p-12`} flex items-center justify-center min-h-[300px] overflow-hidden`}>
+                  {project.imageUrl ? (
+                    <img 
+                      src={project.imageUrl} 
+                      alt={project.title} 
+                      className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-500 hover:scale-105"
+                    />
+                  ) : (
+                    <>
+                      <div className="relative z-10">
+                        {project.icon && <project.icon className="w-32 h-32 text-white opacity-90" strokeWidth={1.5} />}
+                      </div>
+                      {/* Decorative Elements (අනෙක් ප්‍රොජෙක්ට්ස් වලට විතරක්) */}
+                      <div className="absolute inset-0 bg-black/20" />
+                      <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+                      <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+                    </>
+                  )}
                 </div>
 
                 {/* Content Section */}
