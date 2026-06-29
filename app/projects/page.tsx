@@ -1,6 +1,6 @@
 'use client';
 
-import { ExternalLink, GraduationCap, Smartphone, Music } from 'lucide-react';
+import { ExternalLink, GraduationCap, Smartphone } from 'lucide-react';
 import Image from 'next/image';
 
 const projects = [
@@ -18,6 +18,7 @@ const projects = [
       'Parent Communication',
       'Event Calendar',
     ],
+    link: '#',
   },
   {
     id: 2,
@@ -33,12 +34,13 @@ const projects = [
       'Secure Checkout',
       'Order Tracking',
     ],
+    link: '#',
   },
   {
     id: 3,
     title: 'DJ VIP & Music Portal',
     description: 'A full-featured entertainment website for a DJ to sell VIP packages, publish latest tracks, manage bookings, and engage with fans. Includes audio streaming, event calendar, ticket sales, and exclusive member content areas.',
-    icon: Music,
+    imageUrl: 'https://raw.githubusercontent.com/Induwara20091005/dj-tharusha/refs/heads/main/assets/images/logo.jpeg',
     tags: ['Entertainment', 'Next.js', 'Streaming', 'Membership'],
     color: 'from-orange-500 to-red-500',
     features: [
@@ -48,6 +50,7 @@ const projects = [
       'Track Publishing',
       'Fan Engagement Tools',
     ],
+    link: 'https://djtharusha.netlify.app/',
   },
 ];
 
@@ -77,8 +80,16 @@ export default function Projects() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                 {/* Image/Visual Section */}
                 <div className={`relative bg-gradient-to-br ${project.color} p-12 flex items-center justify-center`}>
-                  <div className="relative z-10">
-                    <project.icon className="w-32 h-32 text-white opacity-90" strokeWidth={1.5} />
+                  <div className="relative z-10 flex items-center justify-center">
+                    {project.imageUrl ? (
+                      <img 
+                        src={project.imageUrl} 
+                        alt={project.title} 
+                        className="w-32 h-32 rounded-full object-cover shadow-2xl border-4 border-white/20 opacity-90"
+                      />
+                    ) : (
+                      project.icon && <project.icon className="w-32 h-32 text-white opacity-90" strokeWidth={1.5} />
+                    )}
                   </div>
                   {/* Decorative Elements */}
                   <div className="absolute inset-0 bg-black/20" />
@@ -92,7 +103,7 @@ export default function Projects() {
                     {/* Title */}
                     <h2 className="text-3xl sm:text-4xl font-display font-bold text-white mb-4">
                       {project.title}
-                    </h2>
+                    </h2> 
 
                     {/* Tags */}
                     <div className="flex flex-wrap gap-2 mb-6">
@@ -132,12 +143,15 @@ export default function Projects() {
 
                   {/* Action Button */}
                   <div className="pt-4">
-                    <button
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center space-x-2 px-6 py-3 bg-primary-500/20 border border-primary-500/30 text-primary-300 font-body text-lg font-semibold rounded-xl transition-all duration-300 hover:bg-primary-500/30 hover:border-primary-400/50 group"
                     >
                       <span>View Project</span>
                       <ExternalLink className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
