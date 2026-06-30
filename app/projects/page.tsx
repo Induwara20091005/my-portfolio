@@ -1,10 +1,20 @@
 'use client';
 
-import { ExternalLink, GraduationCap, Smartphone } from 'lucide-react';
-import Image from 'next/image';
+import { ExternalLink } from 'lucide-react';
 
-const projects = [
-  
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  tags: string[];
+  color: string;
+  features: string[];
+  link: string;
+  icon?: React.ComponentType<any>;
+}
+
+const projects: Project[] = [
   {
     id: 1,
     title: 'DJ VIP & Music Portal',
@@ -24,7 +34,7 @@ const projects = [
   {
     id: 2,
     title: 'Yasiru Narangoda - Designer Portfolio',
-    description: 'Designed and developed a sleek, modern 'Dark Cyber' portfolio website for a graphic designer. Built using Next.js, Tailwind CSS, and fully deployed on Netlify with automated CI/CD workflows.',
+    description: "Designed and developed a sleek, modern 'Dark Cyber' portfolio website for a graphic designer. Built using Next.js, Tailwind CSS, and fully deployed on Netlify with automated CI/CD workflows.",
     imageUrl: 'https://raw.githubusercontent.com/kavigraphicsofc/my-portfolio/refs/heads/main/Images/Logo.png',
     tags: ["Next.js", "Tailwind CSS", "TypeScript", "Netlify"],
     color: 'from-orange-500 to-red-500',
@@ -59,12 +69,11 @@ export default function Projects() {
           {projects.map((project, index) => (
             <div
               key={project.id}
-              className={`bg-slate-900/50 backdrop-blur-sm border border-primary-500/20 rounded-2xl overflow-hidden hover:border-primary-400/40 transition-all duration-300 card-hover animate-slide-up`}
+              className="bg-slate-900/50 backdrop-blur-sm border border-primary-500/20 rounded-2xl overflow-hidden hover:border-primary-400/40 transition-all duration-300 card-hover animate-slide-up"
               style={{ animationDelay: `${index * 0.15}s` }}
             >
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                 {/* Image/Visual Section */}
-                {/* මෙතනදී DJ project එකට Gradient එක වෙනුවට Full Image එකක් එන්න සකස් කළා */}
                 <div className={`relative ${project.imageUrl ? 'p-0' : `bg-gradient-to-br ${project.color} p-12`} flex items-center justify-center min-h-[300px] overflow-hidden`}>
                   {project.imageUrl ? (
                     <img 
@@ -77,7 +86,7 @@ export default function Projects() {
                       <div className="relative z-10">
                         {project.icon && <project.icon className="w-32 h-32 text-white opacity-90" strokeWidth={1.5} />}
                       </div>
-                      {/* Decorative Elements (අනෙක් ප්‍රොජෙක්ට්ස් වලට විතරක්) */}
+                      {/* Decorative Elements */}
                       <div className="absolute inset-0 bg-black/20" />
                       <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
                       <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
