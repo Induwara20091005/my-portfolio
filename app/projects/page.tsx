@@ -4,40 +4,9 @@ import { ExternalLink, GraduationCap, Smartphone } from 'lucide-react';
 import Image from 'next/image';
 
 const projects = [
+  
   {
     id: 1,
-    title: 'School Management System',
-    description: 'A comprehensive web platform designed for educational institutions to manage their digital presence, student information, announcements, and administrative tasks. Features include student portals, teacher dashboards, attendance tracking, and parent communication tools.',
-    icon: GraduationCap,
-    tags: ['Next.js', 'React', 'Tailwind CSS', 'Database'],
-    color: 'from-blue-500 to-cyan-500',
-    features: [
-      'Student & Teacher Portals',
-      'Attendance Management',
-      'Grade Tracking System',
-      'Parent Communication',
-      'Event Calendar',
-    ],
-    link: '#',
-  },
-  {
-    id: 2,
-    title: 'Mobile Phone Shop',
-    description: 'A modern e-commerce website for showcasing and selling mobile devices. Built with a sleek design, this platform features product catalogs, detailed specifications, comparison tools, shopping cart functionality, and secure checkout process.',
-    icon: Smartphone,
-    tags: ['E-commerce', 'React', 'Tailwind', 'Payment Integration'],
-    color: 'from-purple-500 to-pink-500',
-    features: [
-      'Product Catalog',
-      'Advanced Search & Filters',
-      'Shopping Cart',
-      'Secure Checkout',
-      'Order Tracking',
-    ],
-    link: '#',
-  },
-  {
-    id: 3,
     title: 'DJ VIP & Music Portal',
     description: 'A full-featured entertainment website for a DJ to sell VIP packages, publish latest tracks, manage bookings, and engage with fans. Includes audio streaming, event calendar, ticket sales, and exclusive member content areas.',
     imageUrl: 'https://raw.githubusercontent.com/Induwara20091005/dj-tharusha/refs/heads/main/assets/images/logo.jpeg',
@@ -51,6 +20,22 @@ const projects = [
       'Fan Engagement Tools',
     ],
     link: 'https://djtharusha.netlify.app/',
+  },
+  {
+    id: 2,
+    title: 'Yasiru Narangoda - Designer Portfolio',
+    description: 'Designed and developed a sleek, modern 'Dark Cyber' portfolio website for a graphic designer. Built using Next.js, Tailwind CSS, and fully deployed on Netlify with automated CI/CD workflows.',
+    imageUrl: 'https://raw.githubusercontent.com/kavigraphicsofc/my-portfolio/refs/heads/main/Images/Logo.png',
+    tags: ["Next.js", "Tailwind CSS", "TypeScript", "Netlify"],
+    color: 'from-orange-500 to-red-500',
+    features: [
+      'Portfolio',
+      'About section',
+      'Project section',
+      'Contact section',
+      'Responsive header & footer',
+    ],
+    link: 'https://yasirunarangoda.netlify.app',
   },
 ];
 
